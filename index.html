@@ -3,210 +3,37 @@
 	<head>
 		<title>Daniel López García</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<meta name="description" content="Web personal de Daniel Lopez Garcia" />
-		<meta name="keywords" content="dalogax,daniel,lopez,garcia,windsurf,bricolabs,drone,dagolax, dalogas, dagolas"/>
-		<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,600,700" rel="stylesheet" />
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-		<script src="js/config.js"></script>
-		<script src="js/skel.min.js"></script>
-		<link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
-		<link rel="icon" href="/images/favicon.ico" type="image/x-icon">
-		<noscript>
-			<link rel="stylesheet" href="css/skel-noscript.css" />
-			<link rel="stylesheet" href="css/style.css" />
-			<link rel="stylesheet" href="css/style-desktop.css" />
-		</noscript>
+		<meta name="description" content="Daniel Lopez Garcia personal portfolio" />
+		<meta name="keywords" content="dalogax,daniel,lopez,garcia,portfolio,java,j2ee,bricolabs,drone,dagolax,dalogas,dagolas"/>
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+		<link rel="icon" href="favicon.ico" type="image/x-icon">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="path/to/hack.css">
+		<script type="text/javascript" src="renderjson.js"></script>
+		<script src="cv.js"></script>
+		<style>
+			.renderjson a              { text-decoration: none; 
+										 color: rgb(245, 128, 229);
+										 font-size: 75%; }
+			.renderjson .disclosure    { color: rgb(245, 128, 229);
+										font-size: 75%; }
+			.renderjson .syntax        { color: grey; }
+			.renderjson .string        { color: rgb(255, 166, 0); }
+			.renderjson .number        { color: cyan; }
+			.renderjson .boolean       { color: plum; }
+			.renderjson .key           { color: rgb(31, 241, 136); }
+			.renderjson .keyword       { color: lightgoldenrodyellow; }
+			.renderjson .object.syntax { color: rgb(17, 204, 179); }
+			.renderjson .array.syntax  { color: lightsalmon; }
+			.renderjson 			   { font-family: Hack, monospace;}
+			body {	
+				background: #303030;
+			}	
+		</style>
 	</head>
 	<body>
-			<nav id="nav">
-				<ul class="container">
-					<li><a href="#top">Top</a></li>
-					<li><a href="#work">Work</a></li>
-					<li><a href="#portfolio">Hobbies</a></li>
-                    <li><a href="#sports">Sports</a></li>
-					<li><a href="#contact">Contact</a></li>
-				</ul>
-			</nav>
-			<div class="wrapper wrapper-style1 wrapper-first">
-				<article class="container" id="top">
-					<div class="row">
-						<div class="4u">
-							<span class="me image image-full"><img src="images/me.jpg" alt="" /></span>
-						</div>
-						<div class="8u">
-							<header>
-								<h1>Hi. I'm <strong>Daniel López García</strong>.</h1>
-							</header>
-							<p>Welcome to my new personal web. Here you can find info about me, my job and my hobbies.</p>
-							<a href="#work" class="button button-big">See what I do</a>
-						</div>
-					</div>
-				</article>
-			</div>
-			<div class="wrapper wrapper-style2">
-				<article id="work">
-					<header>
-						<h2>I am a computer engineer.</h2>
-						<span>I am a hardcore developer!</span>
-					</header>
-					<div class="container">
-						<div class="row">
-							<div class="4u">
-								<section class="box box-style1">
-									<span><img src="images/academic.jpg" height="150" alt="" /></span>
-									<h3>Graduated on the University of A Coruña</h3>
-									<p><strong>A solid base</strong> from one of the better Computer Faculty on the country.</p>
-								</section>
-							</div>
-							<div class="4u">
-								<section class="box box-style1">
-									<span><img src="images/professional.jpg" height="150" alt="" /></span>
-									<h3>Growing at Indra Software Labs</h3>
-									<p>From Oct 2011 to Nov 2015 adquiring <strong> powerful skills</strong> on the biggest spanish IT company.</p>
-								</section>
-							</div>
-							<div class="4u">
-								<section class="box box-style1">
-									<span><img src="images/inditex.jpg" height="150" alt="" /></span>
-									<h3>Working at Inditex!</h3>
-									<p><strong>Giving my best</strong> on the fashion world. BackEnd developer at ZARA.COM</p>
-								</section>
-							</div>
-						</div>
-					</div>
-					<footer>
-						<p>But... all this looks boring, isn't it?</p>
-						<a href="#portfolio" class="button button-big">See my hobbies</a>
-					</footer>
-				</article>
-			</div>
-			<div class="wrapper wrapper-style3">
-				<article id="portfolio">
-					<header>
-						<h2>I a Maker!</h2>
-						<span>Truly follower of the Do It Yourself religion</span>
-					</header>
-					<div class="container">
-						<div class="row">
-							<div class="12u">
-							</div>
-						</div>
-						<div class="row">
-							<div class="4u">
-								<article class="box box-style2">
-									<a href="https://www.youtube.com/watch?v=WOLEGNC3h3Y" class="image image-full"><img src="images/gladiator.jpg" alt="" /></a>
-									<h3><a href="https://www.youtube.com/watch?v=WOLEGNC3h3Y">Gladiator 3D printer</a></h3>
-									<p>Third iteration of Prusa</p>
-								</article>
-							</div>
-							<div class="4u">
-								<article class="box box-style2">
-									<a href="https://www.youtube.com/watch?v=KQYjYy-v8A4" class="image image-full"><img src="images/cylon.jpg" alt="" /></a>
-									<h3><a href="https://www.youtube.com/watch?v=KQYjYy-v8A4">Cylon</a></h3>
-									<p>Arduino powered robot</p>
-								</article>
-							</div>
-							<div class="4u">
-								<article class="box box-style2">
-									<a href="https://www.youtube.com/watch?v=XgpER1goGss" class="image image-full"><img src="images/darius.jpg" alt="" /></a>
-									<h3><a href="https://www.youtube.com/watch?v=XgpER1goGss">Darius</a></h3>
-									<p>Darc210 PRO Racing Drone</p>
-								</article>
-							</div>
-						</div>
-						<div class="row">
-							<div class="4u">
-								<article class="box box-style2">
-									<a href="https://github.com/dalogax/sensorStation" class="image image-full"><img src="images/sensor.jpg" alt="" /></a>
-									<h3><a href="https://github.com/dalogax/sensorStation">Enviromental Sensor station</a></h3>
-									<p>Web access to: temperature, pressure, humidity, gas, light and noise.</p>
-								</article>
-							</div>
-							<div class="4u">
-								<article class="box box-style2">
-									<a href="https://www.youtube.com/watch?v=xzs9pRLmyQo" class="image image-full"><img src="images/leds.jpg" alt="" /></a>
-									<h3><a href="https://www.youtube.com/watch?v=xzs9pRLmyQo">Audio-rhythmical RGB LED Strip</a></h3>
-									<p>Led lights rules :D</p>
-								</article>
-							</div>
-							<div class="4u">
-								<article class="box box-style2">
-									<a href="https://www.youtube.com/watch?v=3XHFSylT3Pk" class="image image-full"><img src="images/hand.jpg" alt="" /></a>
-									<h3><a href="https://www.youtube.com/watch?v=3XHFSylT3Pk">3D printed Robotic hand</a></h3>
-									<p>Saying hello to robotics</p>
-								</article>
-							</div>
-						</div>
-					</div>
-                   
-					<footer>
-						<p>Yeah... this still sounds boring...</p>
-						<a href="#sports" class="button button-big">See my non freak hobbies</a>
-					</footer>
-				</article>
-			</div>
-			<div class="wrapper wrapper-style3">
-				<article id="sports">
-					<header>
-						<h2>Sports lover</h2>
-						<span>Faster, Higher, Stronger!</span>
-					</header>
-					<div class="container">
-						<div class="row">
-							<div class="12u">
-							</div>
-						</div>
-						<div class="row">
-							<div class="4u">
-								<article class="box box-style2">
-									<p class="image image-full"><img src="images/swim.JPG" alt=""/></p>
-									<h3>Swim</a></h3>
-								</article>
-							</div>
-							<div class="4u">
-								<article class="box box-style2">
-									<p class="image image-full"><img src="images/bike.JPG" alt=""/></p>
-									<h3>Bike</a></h3>
-								</article>
-							</div>
-							<div class="4u">
-								<article class="box box-style2">
-									<p class="image image-full"><img src="images/run.jpg" alt=""/></p>
-									<h3>Run!</a></h3>
-								</article>
-							</div>
-						</div>
-				    </div>
-				</article>
-			</div>
-			<div class="wrapper wrapper-style4">
-				<article id="contact" class="container small">
-						<div class="row">
-							<div class="12u">
-								<h3>Find me on ...</h3>
-								<ul class="social">
-									<li class="twitter"><a href="http://twitter.com/dalogax" class="fa fa-twitter"><span>Twitter</span></a></li>
-									<li class="facebook"><a href="https://www.facebook.com/dalogax" class="fa fa-facebook"><span>Facebook</span></a></li>
-									<!--<li class="dribbble"><a href="http://dribbble.com/n33" class="fa fa-dribbble"><span>Dribbble</span></a></li>-->
-									<li class="linkedin"><a href="https://www.linkedin.com/in/dalogax" class="fa fa-linkedin"><span>LinkedIn</span></a></li>
-									<!--<li class="tumblr"><a href="#" class="fa fa-tumblr"><span>Tumblr</span></a></li>-->
-									<li class="googleplus"><a href="https://plus.google.com/u/0/+DanielLópezGarcíadalogax/" class="fa fa-google-plus"><span>Google+</span></a></li>
-									<li class="github"><a href="http://github.com/dalogax" class="fa fa-github"><span>Github</span></a></li>
-									<!--<li class="rss"><a href="#" class="fa fa-rss"><span>RSS</span></a></li>-->
-									<li class="instagram"><a href="http://instagram.com/dalogax" class="fa fa-instagram"><span>Instagram</span></a></li>
-									<!--<li class="foursquare"><a href="#" class="fa fa-foursquare"><span>Foursquare</span></a></li>-->
-									<!--<li class="skype"><a href="#" class="fa fa-skype"><span>Skype</span></a></li>
-									<li class="soundcloud"><a href="#" class="fa fa-soundcloud"><span>Soundcloud</span></a></li>-->
-									<li class="youtube"><a href="https://www.youtube.com/user/dalogax/videos" class="fa fa-youtube"><span>YouTube</span></a></li>
-									<!--<li class="blogger"><a href="#" class="fa fa-blogger"><span>Blogger</span></a></li>
-									<li class="flickr"><a href="#" class="fa fa-flickr"><span>Flickr</span></a></li>
-									<li class="vimeo"><a href="#" class="fa fa-vimeo"><span>Vimeo</span></a></li>-->
-								</ul>
-								<hr />
-							</div>
-						</div>
-					</div>
-				</article>
-			</div>
+		<script>
+			document.body.appendChild(renderjson(cv));
+		</script>
 	</body>
 </html>
