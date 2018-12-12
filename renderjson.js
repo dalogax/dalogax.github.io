@@ -208,7 +208,8 @@ var module, window, define, renderjson=(function() {
     renderjson.set_max_string_length("none");
     renderjson.set_replacer(void 0);
     renderjson.set_property_list(void 0);
-    renderjson.set_collapse_msg(function(len) { return len + " item" + (len==1 ? "" : "s") })
+    renderjson.set_collapse_msg(function(len) { return len + " item" + (len==1 ? "" : "s") });
+    renderjson.set_show_to_level(4);
     return renderjson;
 })();
 
