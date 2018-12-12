@@ -202,14 +202,14 @@ var module, window, define, renderjson=(function() {
     renderjson.set_show_by_default = function(show) { renderjson.options.show_to_level = show ? Number.MAX_VALUE : 0;
                                                       return renderjson; };
     renderjson.options = {};
-    renderjson.set_icons('+', '-');
+    renderjson.set_icons('▶', '▽');
     renderjson.set_show_by_default(true);
     renderjson.set_sort_objects(false);
     renderjson.set_max_string_length("none");
     renderjson.set_replacer(void 0);
     renderjson.set_property_list(void 0);
     renderjson.set_collapse_msg(function(len) { return len + " item" + (len==1 ? "" : "s") });
-    renderjson.set_show_to_level(4);
+    renderjson.set_show_to_level(3);
     return renderjson;
 })();
 
