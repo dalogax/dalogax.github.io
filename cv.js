@@ -6,7 +6,8 @@ var cv = {
     email: "dalogax@gmail.com",
     website: "http://www.dalogax.com",
     github: "https://github.com/dalogax",
-    skills: ["java","REST","SQL","clean code", "DDD", "technical analysis"],
+    linkedin: "https://www.linkedin.com/in/dalogax",
+    skills: ["backend","API","clean code", "DDD", "cache"],
     experience: [
         {
             title: "Tech Lead",
@@ -61,5 +62,5 @@ var cv = {
         twitter: "https://twitter.com/dalogax",
         instagram: "https://www.instagram.com/dalogax"
     },
-    hobbies: ["IoT","robots","sports"]
+    hobbies: ["sports","IoT","robots"]
 }
