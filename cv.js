@@ -10,7 +10,7 @@ var cv = {
     skills: ["backend","API","clean code", "DDD", "cache"],
     experience: [
         {
-            title: "Tech Lead",
+            title: "Staff Engineer",
             company: "zara.com",
             startDate: 2015
         },
