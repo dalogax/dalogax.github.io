@@ -10,7 +10,6 @@ var cv = {
     twitter: "https://twitter.com/dalogax",
     skills: ["java","backend","API","clean code","architecture","DDD","performance","SRE"],
     hobbies: ["sports","IoT","robots"],
-    summary: "I'm a tech passionate that loves working on Product. My current role is Staff Engineer at zara.com where I lead a chapter of backend engineers. I'm fluent in Java but sometimes I also write some Python or Javascript. I spent the last years taking down a monolith and more recently I started focusing on architecture and site reliability. The agile principles are always on my mind, they often help me to make better decisions and measure consequences. I also enjoy creating community whenever I go, is quite easy to make me sign up for anything :)",
     experience: [
         {
             title: "Staff Engineer",
