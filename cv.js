@@ -7,7 +7,10 @@ var cv = {
     website: "http://www.dalogax.com",
     github: "https://github.com/dalogax",
     linkedin: "https://www.linkedin.com/in/dalogax",
-    skills: ["backend","API","clean code", "DDD", "cache"],
+    twitter: "https://twitter.com/dalogax",
+    skills: ["java","backend","API","clean code","architecture","DDD","performance","SRE"],
+    hobbies: ["sports","IoT","robots"],
+    summary: "I'm a tech passionate that loves working on Product. My current role is Staff Engineer at zara.com where I lead a chapter of backend engineers. I'm fluent in Java but sometimes I also write some Python or Javascript. I spent the last years taking down a monolith and more recently I started focusing on architecture and site reliability. The agile principles are always on my mind, they often help me to make better decisions and measure consequences. I also enjoy creating community whenever I go, is quite easy to make me sign up for anything :)",
     experience: [
         {
             title: "Staff Engineer",
@@ -56,11 +59,5 @@ var cv = {
             startDate: 2011,
             endDate: 2008
         }
-    ],
-    social: {
-        facebook: "https://www.facebook.com/dalogax",
-        twitter: "https://twitter.com/dalogax",
-        instagram: "https://www.instagram.com/dalogax"
-    },
-    hobbies: ["sports","IoT","robots"]
+    ]
 }
