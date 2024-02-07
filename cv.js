@@ -55,8 +55,8 @@ var cv = {
         {
             degree: "Technical engineering on computer systems",
             school: "University of A Coruña",
-            startDate: 2011,
-            endDate: 2008
+            startDate: 2008,
+            endDate: 2011
         }
     ]
 }
