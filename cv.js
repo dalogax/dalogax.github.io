@@ -14,7 +14,7 @@ var cv = {
         {
             title: "Staff Engineer",
             company: "Inditex",
-            startDate: "2015-01-01T00:00:00Z"
+            startDate: "2015-11-01T00:00:00Z"
         },
         {
             title: "Software Engineer",
