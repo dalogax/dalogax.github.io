@@ -1,20 +1,20 @@
 var cv = {
     name: "Daniel",
-    surname: "López García",
+    surname: "Lopez Garcia",
     nickname: "dalogax",
-    birth: 610675200,
+    birth: "1989-05-09T00:00:00Z",
     email: "dalogax@gmail.com",
     website: "http://www.dalogax.com",
     github: "https://github.com/dalogax",
     linkedin: "https://www.linkedin.com/in/dalogax",
-    twitter: "https://twitter.com/dalogax",
+    twitter: "https://x.com/dalogax",
     skills: ["java","backend","API","clean code","architecture","DDD","performance","SRE"],
-    hobbies: ["sports","IoT","robots"],
+    hobbies: ["sports","robots"],
     experience: [
         {
             title: "Staff Engineer",
-            company: "zara.com",
-            startDate: 2015
+            company: "Inditex",
+            startDate: "2015-01-01T00:00:00Z"
         },
         {
             title: "Software Engineer",
@@ -36,27 +36,27 @@ var cv = {
                     technologies: ["velocity","JQL","jQuery"]
                 },
             ],
-            startDate: 2011,
-            endDate: 2015
+            startDate: "2011-10-01T00:00:00Z",
+            endDate: "2015-11-01T00:00:00Z"
         }
     ],
     education: [
         {
             degree: "Master in Computer Engineering",
             school: "University of A Coruña",
-            startDate: 2014
+            startDate: "2014-09-01T00:00:00Z"
         },
         {
             degree: "Degree in Computer Engineering",
             school: "University of A Coruña",
-            startDate: 2012,
-            endDate: 2014
+            startDate: "2012-09-01T00:00:00Z",
+            endDate: "2014-07-01T00:00:00Z"
         },
         {
             degree: "Technical engineering on computer systems",
             school: "University of A Coruña",
-            startDate: 2008,
-            endDate: 2011
+            startDate: "2007-09-01T00:00:00Z",
+            endDate: "2011-06-01T00:00:00Z"
         }
     ]
 }
