@@ -1,41 +1,174 @@
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<title>Daniel López García</title>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<meta name="description" content="Daniel Lopez Garcia personal portfolio" />
-		<meta name="keywords" content="dalogax,daniel,lopez,garcia,portfolio,java,j2ee,bricolabs,drone,dagolax,dalogas,dagolas"/>
-		<script defer src="http://umami-dw84o8gk4ks8wooskk44k8ks.158.101.198.12.sslip.io/script.js" data-website-id="16e74310-3c01-4bd8-912d-0f6045da8b96"></script>
-		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-		<link rel="icon" href="favicon.ico" type="image/x-icon">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<link rel="stylesheet" href="path/to/hack.css">
-		<script type="text/javascript" src="renderjson.js"></script>
-		<script src="cv.js"></script>
-		<style>
-			.renderjson a              { text-decoration: none; 
-										 color: rgb(245, 128, 229);
-										 font-size: 75%; }
-			.renderjson .disclosure    { color: rgb(245, 128, 229);
-										font-size: 75%; }
-			.renderjson .syntax        { color: grey; }
-			.renderjson .string        { color: rgb(255, 166, 0); }
-			.renderjson .number        { color: cyan; }
-			.renderjson .boolean       { color: plum; }
-			.renderjson .key           { color: rgb(31, 241, 136); }
-			.renderjson .keyword       { color: lightgoldenrodyellow; }
-			.renderjson .object.syntax { color: rgb(17, 204, 179); }
-			.renderjson .array.syntax  { color: lightsalmon; }
-			.renderjson 			   { font-family: Hack, monospace;}
-			body {	
-				background: #303030;
-			}	
-		</style>
-		<a rel="me" href="https://mastodon.gal/@dalogax" style="display:none" >Mastodon</a>
-	</head>
-	<body>
-		<script>
-			document.body.appendChild(renderjson(cv));
-		</script>
-	</body>
+<!doctype html>
+<html lang="en" class="nojs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>dalogax · Daniel López García</title>
+<meta name="description" content="Daniel López García (dalogax). Principal Engineer at Inditex. A room with everything I'm into: code, simracing, homelab, robots and triathlon.">
+<meta name="theme-color" content="#0b0b11">
+<meta property="og:title" content="dalogax">
+<meta property="og:description" content="Step into my room. Tap anything.">
+<meta property="og:image" content="https://dalogax.com/og.jpg">
+<meta property="og:url" content="https://dalogax.com/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="me" href="https://mastodon.gal/@dalogax">
+<link rel="modulepreload" href="js/engine.js">
+<link rel="modulepreload" href="js/scene.js">
+<script>document.documentElement.className = 'js'</script>
+<style>
+:root {
+  --bg: #0b0b11; --fg: #eceaf4; --mute: #9b97ad; --line: rgba(255,255,255,.09);
+  --acc: #f0abfc; --acc2: #67e8f9; --card: rgba(16,15,24,.94);
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0 }
+html, body { height: 100%; background: var(--bg); color: var(--fg);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased }
+body { overflow: hidden; overscroll-behavior: none; -webkit-tap-highlight-color: transparent }
+a { color: var(--acc2); text-underline-offset: 3px }
+#bg { position: fixed; inset: 0; background:
+  radial-gradient(90% 70% at 55% 45%, #221a3a 0%, #121020 45%, #08080d 100%) }
+#gl { position: fixed; inset: 0; width: 100%; height: 100%; display: none; touch-action: none; opacity: 0; transition: opacity 1.2s }
+.gl #gl { display: block }
+.ready #gl { opacity: 1 }
+
+header { position: fixed; z-index: 3; top: max(16px, env(safe-area-inset-top)); left: 18px; pointer-events: none }
+h1 { font: 600 14px/1 var(--mono); letter-spacing: .08em }
+h1 b { color: var(--acc); font-weight: 600 }
+#hint { margin-top: 8px; font: 12px/1.3 var(--mono); color: var(--mute); transition: opacity .8s }
+#hint.gone { opacity: 0 }
+
+.beacon { position: fixed; z-index: 2; left: 0; top: 0; width: 44px; height: 44px; margin: -22px 0 0 -22px;
+  border: 0; background: none; cursor: pointer; transition: opacity .4s }
+.beacon::before { content: ""; position: absolute; inset: 18px; border-radius: 50%; background: #fff;
+  box-shadow: 0 0 10px 2px var(--acc) }
+.beacon::after { content: ""; position: absolute; inset: 12px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.75);
+  animation: ping 2.6s cubic-bezier(.2,.6,.3,1) infinite }
+.beacon span { position: absolute; left: 50%; bottom: 80%; transform: translate(-50%, 4px); white-space: nowrap;
+  font: 500 11px/1 var(--mono); letter-spacing: .06em; padding: 5px 8px; border-radius: 6px;
+  background: rgba(10,10,16,.8); color: var(--fg); opacity: 0; transition: .2s; pointer-events: none }
+.beacon:hover span, .beacon:focus-visible span { opacity: 1; transform: translate(-50%, 0) }
+.beacon:focus-visible { outline: 2px solid var(--acc2); border-radius: 50% }
+.focused .beacon { opacity: 0; pointer-events: none }
+@keyframes ping { 0% { transform: scale(.6); opacity: 1 } 80%, 100% { transform: scale(1.7); opacity: 0 } }
+
+#sheet { position: fixed; z-index: 4; left: 0; right: 0; bottom: 0; max-height: 52vh; overflow: auto;
+  background: var(--card); border: 1px solid var(--line); border-bottom: 0; border-radius: 22px 22px 0 0;
+  padding: 0 22px calc(18px + env(safe-area-inset-bottom)); box-shadow: 0 -20px 60px rgba(0,0,0,.45);
+  transform: translateY(110%); transition: transform .5s cubic-bezier(.2,.85,.25,1); overscroll-behavior: contain }
+#sheet.open { transform: none }
+.grab { position: sticky; top: 0; height: 26px; margin: 0 -22px; touch-action: none; cursor: grab; background: inherit; z-index: 1 }
+.grab::before { content: ""; position: absolute; left: 50%; top: 10px; width: 38px; height: 4px; margin-left: -19px;
+  border-radius: 2px; background: rgba(255,255,255,.22) }
+.x { position: absolute; right: 12px; top: 10px; z-index: 2; width: 36px; height: 36px; border: 0; border-radius: 50%;
+  background: rgba(255,255,255,.07); color: var(--fg); font-size: 20px; line-height: 1; cursor: pointer }
+.k { font: 12px/1 var(--mono); color: var(--acc); letter-spacing: .06em; margin: 4px 0 10px }
+h2 { font-size: 26px; line-height: 1.15; letter-spacing: -.01em; margin-bottom: 10px }
+section p { color: #cfcbdc; margin-bottom: 10px; max-width: 60ch }
+section p.lead { color: var(--fg); font-size: 17px }
+.tags { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 6px }
+.tags li { font: 12px/1 var(--mono); padding: 6px 9px; border-radius: 99px; border: 1px solid var(--line); color: var(--mute) }
+.links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px }
+.links a { font: 13px/1 var(--mono); padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,.06);
+  color: var(--fg); text-decoration: none }
+.links a:hover { background: rgba(240,171,252,.18) }
+nav { display: none }
+.gl nav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; padding-top: 12px;
+  border-top: 1px solid var(--line) }
+nav button { border: 0; background: none; color: var(--mute); font: 13px/1 var(--mono); padding: 10px 4px; cursor: pointer }
+nav button:hover { color: var(--fg) }
+
+@media (min-width: 820px) and (min-aspect-ratio: 1/1) {
+  #sheet { left: auto; top: 16px; right: 16px; bottom: 16px; width: 390px; max-height: none; border-radius: 22px;
+    border: 1px solid var(--line); padding: 26px 30px; transform: translateX(calc(100% + 32px)) }
+  .grab { display: none }
+  h2 { font-size: 30px }
+}
+
+/* without WebGL the room is just a page */
+html:not(.gl) body { overflow: auto }
+html:not(.gl) header { position: static; padding: 40px 22px 0; max-width: 680px; margin: auto }
+html:not(.gl) #hint { display: none }
+html:not(.gl) #sheet { position: static; transform: none; max-height: none; max-width: 680px; margin: auto;
+  background: none; border: 0; box-shadow: none; width: auto }
+html:not(.gl) #sheet section { display: block !important; padding: 28px 0; border-bottom: 1px solid var(--line) }
+html:not(.gl) .grab, html:not(.gl) .x { display: none }
+@media (prefers-reduced-motion: reduce) { .beacon::after { animation: none } }
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<canvas id="gl" aria-label="A 3D model of my room. Tap things to explore."></canvas>
+<header>
+  <h1>dalogax<b>_</b></h1>
+  <p id="hint">this is my room. tap anything.</p>
+</header>
+
+<aside id="sheet">
+  <div class="grab" aria-hidden="true"></div>
+  <button class="x" aria-label="Close">×</button>
+
+  <section data-id="me" hidden>
+    <p class="k">// hello</p>
+    <h2>Hi, I'm Daniel.</h2>
+    <p class="lead">Daniel López García, <b>dalogax</b> almost everywhere on the internet. Engineer from A Coruña, Galicia.</p>
+    <p>I tend to have opinions on everything and I love debating, but I won't push my views unless I can convince you with arguments. Or, occasionally, your exhaustion.</p>
+    <p>If you made it this far: thanks. I owe you a coffee.</p>
+    <p class="links">
+      <a href="https://github.com/dalogax">github</a>
+      <a href="https://www.linkedin.com/in/dalogax">linkedin</a>
+      <a href="https://mastodon.gal/@dalogax" rel="me">mastodon</a>
+      <a href="https://x.com/dalogax">x</a>
+      <a href="mailto:dalogax@gmail.com">email</a>
+    </p>
+  </section>
+
+  <section data-id="desk" hidden>
+    <p class="k">~/desk</p>
+    <h2>Code</h2>
+    <p class="lead">Principal Engineer at Inditex. I run a chapter of talented backend engineers and help architect practical solutions for a global ecommerce.</p>
+    <p>I spent years untangling a legacy monolith. Now that we're almost free from the monster, it's all about performance, maintainability and developer productivity.</p>
+    <p>Java by default, with side-quests in Python and JavaScript. Lately I code in English, through AI agents: fun, fast, and quite the challenge. Watch them closely. That's what the right half of the monitor is for.</p>
+    <ul class="tags"><li>java</li><li>architecture</li><li>performance</li><li>dev productivity</li><li>ai agents</li></ul>
+    <p class="links"><a href="https://github.com/dalogax">github.com/dalogax</a></p>
+  </section>
+
+  <section data-id="sim" hidden>
+    <p class="k">~/rig</p>
+    <h2>Simracing</h2>
+    <p class="lead">Three screens, a wheel, pedals and a bucket seat bolted to aluminium profile.</p>
+    <p>The one place my brain stops multitasking. Hard to think about architecture diagrams while braking later than last lap.</p>
+    <ul class="tags"><li>triple screen</li><li>wheel &amp; pedals</li><li>lap times</li></ul>
+  </section>
+
+  <section data-id="rack" hidden>
+    <p class="k">~/rack</p>
+    <h2>Homelab</h2>
+    <p class="lead">A 1.3 m rack humming in the corner: Proxmox, a TrueNAS box, Home Assistant running the house over Zigbee, and more containers than strictly necessary.</p>
+    <p>It's also where Jarvis lives, my own AI agent, who keeps the whole thing alive. Jarvis built this room with me, too.</p>
+    <ul class="tags"><li>proxmox</li><li>truenas</li><li>home assistant</li><li>zigbee</li><li>self-hosted ai</li></ul>
+  </section>
+
+  <section data-id="bench" hidden>
+    <p class="k">~/bench</p>
+    <h2>Robots &amp; making</h2>
+    <p class="lead">A soldering station, a 3D printer that's always printing something, and a slowly growing population of robots.</p>
+    <p>Most of them work. The little one on the floor is out on patrol.</p>
+    <ul class="tags"><li>electronics</li><li>3d printing</li><li>robotics</li></ul>
+  </section>
+
+  <section data-id="bike" hidden>
+    <p class="k">~/wall</p>
+    <h2>Triathlon</h2>
+    <p class="lead">Swim, bike, run. The time-trial bike hangs on the wall until it's time to suffer on it.</p>
+    <p>The opposite of my day job: no shortcuts, no abstractions, nobody to delegate to.</p>
+    <ul class="tags"><li>swim</li><li>bike</li><li>run</li></ul>
+  </section>
+
+  <nav><button class="prev">← prev</button><button class="next">next →</button></nav>
+</aside>
+
+<script type="module" src="js/main.js"></script>
+</body>
 </html>
