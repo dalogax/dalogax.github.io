@@ -1,5 +1,5 @@
 import { m4, program, upload, xp } from './engine.js';
-import { buildScene, atlas, LIGHTS } from './scene.js';
+import { buildScene, atlas, LIGHTS, ROOM } from './scene.js';
 
 const html = document.documentElement;
 const canvas = document.getElementById('gl');
@@ -23,7 +23,7 @@ precision highp float; precision highp sampler2DShadow;
 in vec3 v_w, v_n, v_c; in vec2 v_uv; in vec4 v_l; flat in float v_m;
 uniform sampler2DShadow u_sh; uniform sampler2D u_tex;
 uniform float u_t, u_steer, u_dim, u_hi, u_texel, u_flick;
-uniform vec3 u_eye, u_sun, u_lp[6], u_lc[6];
+uniform vec3 u_eye, u_sun, u_lp[8], u_lc[8];
 out vec4 o;
 float h11(float n) { return fract(sin(n * 127.1) * 43758.5453); }
 float h21(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -74,6 +74,23 @@ vec3 race(vec2 uv) {
   return mix(c, vec3(.5, .35, .45), smoothstep(.7, 1., f) * .8);
 }
 
+// A Coruña-ish view: sky, drifting clouds, the Atlantic, a lighthouse on the headland
+vec3 window(vec2 uv) {
+  float hz = .3;
+  vec3 c = mix(vec3(.75, .87, .97), vec3(.33, .6, .92), smoothstep(hz, 1., uv.y));
+  float cl = smoothstep(.55, .75, sin(uv.x * 7. + u_t * .05) * .5 + .5) * smoothstep(.12, 0., abs(uv.y - .78 - .05 * sin(uv.x * 3.)));
+  c = mix(c, vec3(1.), cl * .8);
+  float hill = hz + .07 * smoothstep(.45, .95, uv.x) - .02 * smoothstep(.95, 1., uv.x);
+  if (uv.y < hill && uv.x > .45) c = vec3(.36, .45, .36);
+  if (abs(uv.x - .72) < .012 && uv.y < hill + .1 && uv.y > hill - .01) c = vec3(.86, .82, .74);
+  if (uv.y < hz) {
+    c = mix(vec3(.08, .3, .45), vec3(.2, .5, .62), uv.y / hz);
+    float sp = step(.985, h21(floor(vec2(uv.x * 140., uv.y * 60. + u_t * .3))));
+    c += sp * .5;
+  }
+  return c;
+}
+
 vec3 scope(vec2 uv) {
   vec3 c = vec3(.01, .035, .03);
   vec2 g = abs(fract(uv * vec2(8., 6.)) - .5);
@@ -104,6 +121,7 @@ void main() {
   else if (m == 6) { col = code(v_uv) * 1.6; lit = false; }
   else if (m == 7) { col = race(v_uv) * .95; lit = false; }
   else if (m == 8) { col = scope(v_uv) * 1.6; lit = false; }
+  else if (m == 10) { col = window(v_uv) * 1.5; lit = false; }
 
   vec3 N = normalize(v_n), V = normalize(u_eye - v_w);
   if (lit) {
@@ -119,10 +137,10 @@ void main() {
     if (N.z < .5) ao *= mix(.45, 1., smoothstep(0., .8, v_w.z + 1.75));
     if (N.x < .5) ao *= mix(.45, 1., smoothstep(0., .8, v_w.x + 2.5));
     if (N.y < .5) ao *= mix(.5, 1., smoothstep(0., .35, v_w.y));
-    vec3 L = mix(vec3(.05, .045, .06), vec3(.13, .13, .2), N.y * .5 + .5) * ao;
+    vec3 L = mix(vec3(.2, .19, .19), vec3(.5, .52, .58), N.y * .5 + .5) * ao;
     float nd = max(dot(N, u_sun), 0.);
-    L += vec3(1., .86, .72) * nd * sh * .9;
-    for (int i = 0; i < 6; i++) {
+    L += vec3(1., .9, .8) * nd * sh * 1.05;
+    for (int i = 0; i < 8; i++) {
       vec3 d = u_lp[i] - v_w; float d2 = dot(d, d);
       L += u_lc[i] * max(dot(N, d * inversesqrt(d2)), 0.) / (1. + d2 * 4.) * mix(.6, 1., ao);
     }
@@ -169,7 +187,8 @@ gl.generateMipmap(gl.TEXTURE_2D);
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
 
 const SUN = (() => { const v = [0.9, 2.0, 1.3], l = Math.hypot(...v); return v.map(x => x / l); })();
-const LVP = m4.mul(m4.ortho(-4.2, 4.2, -3.4, 3.4, 1, 24), m4.lookAt(SUN.map((x, i) => [-0.2, 0.9, -0.2][i] + x * 10), [-0.2, 0.9, -0.2], [0, 1, 0]));
+const SC = [(ROOM.x0 + ROOM.x1) / 2, 0.9, (ROOM.z0 + ROOM.z1) / 2];
+const LVP = m4.mul(m4.ortho(-5, 5, -4, 4, 1, 26), m4.lookAt(SUN.map((x, i) => SC[i] + x * 11), SC, [0, 1, 0]));
 
 gl.useProgram(prog.p);
 gl.uniform1i(prog.u.u_sh, 0);
@@ -201,11 +220,11 @@ function fitDist(r, ox = 0, oy = 0) {
 // Frame the room's bounding box for a given yaw/pitch: centre it and pick the distance that fits
 function computeOverview() {
   const portrait = aspect < 0.8;
-  const yaw = 0.72, pitch = portrait ? 0.62 : 0.5, margin = portrait ? 0.86 : 1.06;
+  const yaw = 0.72, pitch = portrait ? 0.62 : 0.5, margin = portrait ? 0.95 : 1.06;
   const cp = Math.cos(pitch), f = [-Math.sin(yaw) * cp, -Math.sin(pitch), -Math.cos(yaw) * cp];
   const r = [Math.cos(yaw), 0, -Math.sin(yaw)], u = [r[1] * f[2] - r[2] * f[1], r[2] * f[0] - r[0] * f[2], r[0] * f[1] - r[1] * f[0]];
   const ext = [[1e9, -1e9], [1e9, -1e9]];
-  for (const x of [-2.6, 2.5]) for (const y of [-0.18, 2.6]) for (const z of [-1.85, 1.75]) {
+  for (const x of [ROOM.x0 - 0.1, ROOM.x1]) for (const y of [-0.18, ROOM.h]) for (const z of [ROOM.z0 - 0.1, ROOM.z1]) {
     const pr = x * r[0] + y * r[1] + z * r[2], pu = x * u[0] + y * u[1] + z * u[2];
     ext[0] = [Math.min(ext[0][0], pr), Math.max(ext[0][1], pr)];
     ext[1] = [Math.min(ext[1][0], pu), Math.max(ext[1][1], pu)];

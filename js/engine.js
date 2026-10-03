@@ -71,7 +71,7 @@ export const xp = (m, p) => { // project with perspective divide
 };
 
 // Material ids, mirrored in the fragment shader
-export const MAT = { LIT: 0, EMIT: 1, LED: 2, RGB: 3, FLOOR: 4, TEX: 5, CODE: 6, RACE: 7, SCOPE: 8, NEON: 9 };
+export const MAT = { LIT: 0, EMIT: 1, LED: 2, RGB: 3, FLOOR: 4, TEX: 5, CODE: 6, RACE: 7, SCOPE: 8, NEON: 9, WINDOW: 10 };
 
 const cache = new Map();
 export const rgb = c => {
@@ -113,6 +113,33 @@ export class Geo {
       const P = (su, sv) => xf(t, [0, 1, 2].map(i => (n[i] + su * u[i] + sv * v[i]) * h[i]));
       const f = front && n[2] === 1;
       this.quad4(P(-1, -1), P(1, -1), P(1, 1), P(-1, 1), f ? front.col ?? col : col, f ? front.mat : mat, xn(t, n));
+    }
+    return this;
+  }
+  // Chamfered box: same as box() but with bevelled edges that catch the light
+  rbox(t, sx, sy, sz, col, c = 0.01, mat = 0, front = null) {
+    const h = [sx / 2, sy / 2, sz / 2];
+    c = Math.min(c, ...h.map(v => v * 0.45));
+    const A = (s, ax) => xf(t, [0, 1, 2].map(i => s[i] * (i === ax ? h[i] : h[i] - c)));
+    const N = (ax, sg) => { const n = [0, 0, 0]; n[ax] = sg; return n; };
+    for (let ax = 0; ax < 3; ax++) for (const sg of [-1, 1]) {
+      const [u, v] = [(ax + 1) % 3, (ax + 2) % 3];
+      const S = (a, b) => { const s = [0, 0, 0]; s[ax] = sg; s[u] = a; s[v] = b; return s; };
+      const f = front && ax === 2 && sg === 1;
+      this.quad4(A(S(-1, -1), ax), A(S(1, -1), ax), A(S(1, 1), ax), A(S(-1, 1), ax),
+        f ? front.col ?? col : col, f ? front.mat : mat, xn(t, N(ax, sg)));
+    }
+    for (let a = 0; a < 3; a++) for (let b = a + 1; b < 3; b++) {
+      const k = 3 - a - b;
+      for (const sa of [-1, 1]) for (const sb of [-1, 1]) {
+        const S = sk => { const s = [0, 0, 0]; s[a] = sa; s[b] = sb; s[k] = sk; return s; };
+        const hint = [0, 0, 0]; hint[a] = sa; hint[b] = sb;
+        this.quad4(A(S(-1), a), A(S(1), a), A(S(1), b), A(S(-1), b), col, mat, xn(t, hint));
+      }
+    }
+    for (const x of [-1, 1]) for (const y of [-1, 1]) for (const z of [-1, 1]) {
+      const s = [x, y, z];
+      this.tri(A(s, 0), A(s, 1), A(s, 2), col, mat, xn(t, s));
     }
     return this;
   }
