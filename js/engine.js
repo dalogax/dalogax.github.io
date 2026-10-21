@@ -71,7 +71,7 @@ export const xp = (m, p) => { // project with perspective divide
 };
 
 // Material ids, mirrored in the fragment shader
-export const MAT = { LIT: 0, EMIT: 1, LED: 2, RGB: 3, FLOOR: 4, TEX: 5, CODE: 6, RACE: 7, SCOPE: 8, NEON: 9, WINDOW: 10 };
+export const MAT = { LIT: 0, EMIT: 1, LED: 2, RGB: 3, FLOOR: 4, TEX: 5, CODE: 6, RACE: 7, SCOPE: 8, NEON: 9, WINDOW: 10, MASK: 11, PORTAL0: 12, PORTAL1: 13 };
 
 const cache = new Map();
 export const rgb = c => {

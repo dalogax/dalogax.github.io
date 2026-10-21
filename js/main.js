@@ -22,8 +22,9 @@ const FS = `#version 300 es
 precision highp float; precision highp sampler2DShadow;
 in vec3 v_w, v_n, v_c; in vec2 v_uv; in vec4 v_l; flat in float v_m;
 uniform sampler2DShadow u_sh; uniform sampler2D u_tex;
+uniform sampler2D u_pt0, u_pt1; uniform vec4 u_clip; uniform vec2 u_res; uniform float u_pass;
 uniform float u_t, u_steer, u_dim, u_hi, u_texel, u_flick;
-uniform vec3 u_eye, u_sun, u_lp[8], u_lc[8];
+uniform vec3 u_eye, u_sun, u_lp[10], u_lc[10];
 out vec4 o;
 float h11(float n) { return fract(sin(n * 127.1) * 43758.5453); }
 float h21(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -100,8 +101,18 @@ vec3 scope(vec2 uv) {
 }
 
 void main() {
+  if (dot(u_clip.xyz, v_w) + u_clip.w < 0.) discard;
   int m = int(v_m + .5);
+  if (m >= 12) {
+    vec3 c = v_c * 1.2;
+    if (u_pass < .5) {
+      vec2 suv = gl_FragCoord.xy / u_res;
+      c = mix(m == 12 ? textureLod(u_pt0, suv, 0.).rgb : textureLod(u_pt1, suv, 0.).rgb, v_c * 2., .1);
+    }
+    o = vec4(c, 1.); return;
+  }
   if (m == 9) { o = vec4(texture(u_tex, v_uv).rgb * u_flick * mix(.4, 1., u_dim), 1.); return; }
+  if (m == 11 && texture(u_tex, v_uv).r < .5) discard;
   vec3 alb = v_c, col = vec3(0.); bool lit = true;
   if (m == 1) { col = v_c * 2.4; lit = false; }
   else if (m == 2) {
@@ -111,11 +122,10 @@ void main() {
   }
   else if (m == 3) { col = hue(fract(u_t * .08 + v_w.y * .8 + v_w.x * .5 + v_w.z * .3)) * v_c * 4.; lit = false; }
   else if (m == 4) {
-    vec2 q = v_w.xz * vec2(.7, 5.5);
-    float row = floor(q.y), off = h11(row) * 3.;
-    float k = h21(vec2(row, floor(q.x + off)));
-    alb *= .78 + .4 * k;
-    if (fract(q.y) < .05 || fract(q.x + off) < .008) alb *= .5;
+    vec2 q = v_w.xz / .9, id = floor(q), f = fract(q);
+    alb *= .95 + .05 * h21(id);
+    float g = min(min(f.x, 1. - f.x), min(f.y, 1. - f.y));
+    alb *= mix(.62, 1., smoothstep(.0, .012, g));
   }
   else if (m == 5) alb *= texture(u_tex, v_uv).rgb;
   else if (m == 6) { col = code(v_uv) * 1.6; lit = false; }
@@ -140,7 +150,7 @@ void main() {
     vec3 L = mix(vec3(.2, .19, .19), vec3(.5, .52, .58), N.y * .5 + .5) * ao;
     float nd = max(dot(N, u_sun), 0.);
     L += vec3(1., .9, .8) * nd * sh * 1.05;
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 10; i++) {
       vec3 d = u_lp[i] - v_w; float d2 = dot(d, d);
       L += u_lc[i] * max(dot(N, d * inversesqrt(d2)), 0.) / (1. + d2 * 4.) * mix(.6, 1., ao);
     }
@@ -159,7 +169,7 @@ precision mediump float; void main() {}`;
 
 const prog = program(gl, VS, FS);
 const sprog = program(gl, SVS, SFS);
-const { nodes, hotspots, spin } = buildScene();
+const { nodes, hotspots, spin, portals } = buildScene();
 for (const n of nodes) { Object.assign(n, upload(gl, n.geo)); delete n.geo; }
 
 // textures: shadow map (unit 0) and atlas (unit 1)
@@ -186,13 +196,52 @@ gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlas());
 gl.generateMipmap(gl.TEXTURE_2D);
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
 
+// portal views: offscreen colour+depth targets on units 2 and 3
+const dummyTex = gl.createTexture();
+gl.activeTexture(gl.TEXTURE2);
+gl.bindTexture(gl.TEXTURE_2D, dummyTex);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([20, 20, 30, 255]));
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+const PS = 0.75;
+const pviews = portals.map((p, i) => {
+  const tex = gl.createTexture(), rb = gl.createRenderbuffer(), fb = gl.createFramebuffer();
+  gl.activeTexture(gl.TEXTURE2 + i);
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  const r = [0, 1, 0], n = p.n;
+  const right = [r[1] * n[2] - r[2] * n[1], r[2] * n[0] - r[0] * n[2], r[0] * n[1] - r[1] * n[0]];
+  const M = new Float32Array([...right, 0, 0, 1, 0, 0, ...n, 0, ...p.pos, 1]);
+  return { tex, rb, fb, M, Minv: m4.inv(M), n, pos: p.pos, w: 0, h: 0 };
+});
+function sizePortalViews() {
+  for (const [i, v] of pviews.entries()) {
+    v.w = Math.max(2, Math.round(W * PS)); v.h = Math.max(2, Math.round(H * PS));
+    gl.activeTexture(gl.TEXTURE2 + i);
+    gl.bindTexture(gl.TEXTURE_2D, v.tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, v.w, v.h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, v.rb);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, v.w, v.h);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, v.fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, v.tex, 0);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, v.rb);
+  }
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+}
+const RYPI = m4.RY(Math.PI);
+
 const SUN = (() => { const v = [0.9, 2.0, 1.3], l = Math.hypot(...v); return v.map(x => x / l); })();
 const SC = [(ROOM.x0 + ROOM.x1) / 2, 0.9, (ROOM.z0 + ROOM.z1) / 2];
-const LVP = m4.mul(m4.ortho(-5, 5, -4, 4, 1, 26), m4.lookAt(SUN.map((x, i) => SC[i] + x * 11), SC, [0, 1, 0]));
+const LVP = m4.mul(m4.ortho(-7.5, 7.5, -6, 6, 1, 32), m4.lookAt(SUN.map((x, i) => SC[i] + x * 14), SC, [0, 1, 0]));
 
 gl.useProgram(prog.p);
 gl.uniform1i(prog.u.u_sh, 0);
 gl.uniform1i(prog.u.u_tex, 1);
+gl.uniform1i(prog.u.u_pt0, 2);
+gl.uniform1i(prog.u.u_pt1, 3);
 gl.uniform3fv(prog.u.u_sun, SUN);
 gl.uniform1f(prog.u.u_texel, 1 / SH);
 gl.uniformMatrix4fv(prog.u.u_lvp, false, LVP);
@@ -220,7 +269,7 @@ function fitDist(r, ox = 0, oy = 0) {
 // Frame the room's bounding box for a given yaw/pitch: centre it and pick the distance that fits
 function computeOverview() {
   const portrait = aspect < 0.8;
-  const yaw = 0.72, pitch = portrait ? 0.62 : 0.5, margin = portrait ? 0.95 : 1.06;
+  const yaw = 0.72, pitch = portrait ? 0.62 : 0.5, margin = portrait ? 1.0 : 1.12;
   const cp = Math.cos(pitch), f = [-Math.sin(yaw) * cp, -Math.sin(pitch), -Math.cos(yaw) * cp];
   const r = [Math.cos(yaw), 0, -Math.sin(yaw)], u = [r[1] * f[2] - r[2] * f[1], r[2] * f[0] - r[0] * f[2], r[0] * f[1] - r[1] * f[0]];
   const ext = [[1e9, -1e9], [1e9, -1e9]];
@@ -233,7 +282,7 @@ function computeOverview() {
   const hw = (ext[0][1] - ext[0][0]) / 2, hh = (ext[1][1] - ext[1][0]) / 2;
   const tv = Math.tan(FOV / 2), th = tv * aspect;
   const c = [r[0] * cr + u[0] * cu, r[1] * cr + u[1] * cu, r[2] * cr + u[2] * cu];
-  overview = { yaw, pitch, tx: c[0], ty: c[1], tz: c[2], ox: 0, oy: 0,
+  overview = { yaw, pitch, tx: c[0], ty: c[1] - (portrait ? 0 : 2.2), tz: c[2], ox: 0, oy: 0,
     dist: Math.max(hw / th, hh / tv) * margin + 1.5 };
 }
 let dprCap = small ? 2 : 1.75;
@@ -241,6 +290,7 @@ function resize() {
   const dpr = Math.min(devicePixelRatio || 1, dprCap);
   W = Math.round(innerWidth * dpr); H = Math.round(innerHeight * dpr);
   canvas.width = W; canvas.height = H; aspect = W / H;
+  sizePortalViews();
   computeOverview();
   if (!focus) Object.assign(goal, overview);
   else refit();
@@ -427,6 +477,7 @@ function frame(now) {
   const t = (now - t0) / 1000;
   const state = { steer: steerAt(t), dt };
   spin.a -= dt * (focus === 'bike' ? 7 : 0);
+  if (focus === 'robot') { const t = hotspots.find(h => h.id === 'robot').view.target; goal.tx = t[0]; goal.ty = t[1]; goal.tz = t[2]; }
   for (const n of nodes) if (n.update) n.update(t, state);
   updateCamera(dt);
 
@@ -455,30 +506,52 @@ function frame(now) {
     gl.drawArrays(gl.TRIANGLES, 0, n.count);
   }
 
+  const fl = Math.sin(t * 1.3) > 0.985 ? 0.35 + 0.65 * (Math.sin(t * 90) > 0) : 1;
+  const drawScene = (vp, eyePos, pass, clip, w, h) => {
+    gl.viewport(0, 0, w, h);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(prog.p);
+    gl.uniformMatrix4fv(prog.u.u_vp, false, vp);
+    gl.uniform3fv(prog.u.u_eye, eyePos);
+    gl.uniform1f(prog.u.u_t, t);
+    gl.uniform1f(prog.u.u_steer, state.steer);
+    gl.uniform1f(prog.u.u_flick, fl);
+    gl.uniform1f(prog.u.u_pass, pass);
+    gl.uniform4fv(prog.u.u_clip, clip);
+    gl.uniform2f(prog.u.u_res, W, H);
+    for (const blend of [false, true]) {
+      if (blend) { gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); gl.depthMask(false); }
+      for (const n of nodes) {
+        if (!!n.blend !== blend) continue;
+        const key = n.hot || '_';
+        gl.uniformMatrix4fv(prog.u.u_model, false, n.model);
+        gl.uniform1f(prog.u.u_dim, dim[key]);
+        gl.uniform1f(prog.u.u_hi, hi[key]);
+        gl.bindVertexArray(n.vao);
+        gl.drawArrays(gl.TRIANGLES, 0, n.count);
+      }
+    }
+    gl.disable(gl.BLEND); gl.depthMask(true);
+  };
+
+  // portal passes: what you see through portal i is the room seen from the other portal's exit
+  for (const [i, v] of pviews.entries()) {
+    const o = pviews[1 - i];
+    const T = m4.C(o.M, RYPI, v.Minv);
+    const vp = m4.mul(VP, m4.inv(T));
+    const e = xp(T, eye).slice(0, 3);
+    const clip = [...o.n, -(o.n[0] * o.pos[0] + o.n[1] * o.pos[1] + o.n[2] * o.pos[2]) - 0.01];
+    gl.activeTexture(gl.TEXTURE2 + i);
+    gl.bindTexture(gl.TEXTURE_2D, dummyTex);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, v.fb);
+    drawScene(vp, e, 1, clip, v.w, v.h);
+    gl.activeTexture(gl.TEXTURE2 + i);
+    gl.bindTexture(gl.TEXTURE_2D, v.tex);
+  }
+
   // main pass
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-  gl.viewport(0, 0, W, H);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  gl.useProgram(prog.p);
-  gl.uniformMatrix4fv(prog.u.u_vp, false, VP);
-  gl.uniform3fv(prog.u.u_eye, eye);
-  gl.uniform1f(prog.u.u_t, t);
-  gl.uniform1f(prog.u.u_steer, state.steer);
-  const fl = Math.sin(t * 1.3) > 0.985 ? 0.35 + 0.65 * (Math.sin(t * 90) > 0) : 1;
-  gl.uniform1f(prog.u.u_flick, fl);
-  for (const pass of [false, true]) {
-    if (pass) { gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); gl.depthMask(false); }
-    for (const n of nodes) {
-      if (!!n.blend !== pass) continue;
-      const key = n.hot || '_';
-      gl.uniformMatrix4fv(prog.u.u_model, false, n.model);
-      gl.uniform1f(prog.u.u_dim, dim[key]);
-      gl.uniform1f(prog.u.u_hi, hi[key]);
-      gl.bindVertexArray(n.vao);
-      gl.drawArrays(gl.TRIANGLES, 0, n.count);
-    }
-  }
-  gl.disable(gl.BLEND); gl.depthMask(true);
+  drawScene(VP, eye, 0, [0, 0, 0, 1], W, H);
 
   placeBeacons();
   adapt(dt);

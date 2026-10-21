@@ -79,8 +79,23 @@ nav { display: none }
 nav button { border: 0; background: none; color: var(--mute); font: 13px/1 var(--mono); padding: 10px 4px; cursor: pointer }
 nav button:hover { color: var(--fg) }
 
+@media (max-width: 819px), (max-aspect-ratio: 1/1) {
+  #sheet { max-height: 40vh; padding: 0 18px calc(12px + env(safe-area-inset-bottom)) }
+  .grab { margin: 0 -18px; height: 16px }
+  .grab::before { display: none }
+  .x { top: 6px; width: 32px; height: 32px }
+  .k { margin: 0 0 6px; font-size: 11px }
+  h2 { font-size: 21px; margin-bottom: 6px }
+  section p { font-size: 14px; line-height: 1.45; margin-bottom: 8px }
+  section p.lead { font-size: 15px }
+  .tags { margin: 10px 0 4px; gap: 5px }
+  .tags li { font-size: 11px; padding: 5px 8px }
+  .links { margin-top: 10px }
+  .links a { font-size: 12px; padding: 8px 10px }
+  .gl nav { margin-top: 10px; padding-top: 4px }
+}
 @media (min-width: 820px) and (min-aspect-ratio: 1/1) {
-  #sheet { left: auto; top: 16px; right: 16px; bottom: 16px; width: 390px; max-height: none; border-radius: 22px;
+  #sheet { left: auto; top: 16px; right: 16px; bottom: auto; width: 390px; max-height: calc(100vh - 32px); border-radius: 22px;
     border: 1px solid var(--line); padding: 26px 30px; transform: translateX(calc(100% + 32px)) }
   .grab { display: none }
   h2 { font-size: 30px }
@@ -112,9 +127,7 @@ html:not(.gl) .grab, html:not(.gl) .x { display: none }
   <section data-id="me" hidden>
     <p class="k">// hello</p>
     <h2>Hi, I'm Daniel.</h2>
-    <p class="lead">Daniel López García, <b>dalogax</b> almost everywhere on the internet. Engineer from A Coruña, Galicia.</p>
-    <p>I tend to have opinions on everything and I love debating, but I won't push my views unless I can convince you with arguments. Or, occasionally, your exhaustion.</p>
-    <p>If you made it this far: thanks. I owe you a coffee.</p>
+    <p class="lead">Daniel López García, <b>dalogax</b> almost everywhere on the internet.</p>
     <p class="links">
       <a href="https://github.com/dalogax">github</a>
       <a href="https://www.linkedin.com/in/dalogax">linkedin</a>
@@ -126,10 +139,8 @@ html:not(.gl) .grab, html:not(.gl) .x { display: none }
 
   <section data-id="desk" hidden>
     <p class="k">~/desk</p>
-    <h2>Code</h2>
-    <p class="lead">Principal Engineer at Inditex. I run a chapter of talented backend engineers and help architect practical solutions for a global ecommerce.</p>
-    <p>I spent years untangling a legacy monolith. Now that we're almost free from the monster, it's all about performance, maintainability and developer productivity.</p>
-    <p>Java by default, with side-quests in Python and JavaScript. Lately I code in English, through AI agents: fun, fast, and quite the challenge. Watch them closely. That's what the right half of the monitor is for.</p>
+    <h2>Coding and Gaming</h2>
+    <p class="lead">Who are we trying to trick? At this desk I only game. Coding these days happens from the phone.</p>
     <ul class="tags"><li>java</li><li>architecture</li><li>performance</li><li>dev productivity</li><li>ai agents</li></ul>
     <p class="links"><a href="https://github.com/dalogax">github.com/dalogax</a></p>
   </section>
@@ -142,6 +153,12 @@ html:not(.gl) .grab, html:not(.gl) .x { display: none }
     <ul class="tags"><li>triple screen</li><li>wheel &amp; pedals</li><li>lap times</li></ul>
   </section>
 
+  <section data-id="portal" hidden>
+    <p class="k">// the cake is not a lie</p>
+    <h2>Isn't Portal the best game ever?</h2>
+    <p class="lead">Two holes in a wall, a gun, and the best puzzle design of all time.</p>
+  </section>
+
   <section data-id="rack" hidden>
     <p class="k">~/rack</p>
     <h2>Homelab</h2>
@@ -152,18 +169,26 @@ html:not(.gl) .grab, html:not(.gl) .x { display: none }
 
   <section data-id="bench" hidden>
     <p class="k">~/bench</p>
-    <h2>Robots &amp; making</h2>
-    <p class="lead">A standing bench with a soldering station, a 3D printer that's always printing something, and a slowly growing population of robots.</p>
-    <p>Most of them work. The little one on the floor is out on patrol.</p>
+    <h2>Robotics &amp; DIY</h2>
+    <p class="lead">Bricolabs pulled me down the maker rabbit hole, and I haven't found the way out since.</p>
+    <p>Robots, electronics, home automation, fixing up whatever breaks: the list of work-in-progress projects is endless, and it's slowly eating me alive. I wouldn't trade it.</p>
     <ul class="tags"><li>electronics</li><li>3d printing</li><li>robotics</li></ul>
   </section>
 
   <section data-id="bike" hidden>
     <p class="k">~/sport</p>
-    <h2>Triathlon</h2>
-    <p class="lead">Swim, bike, run. The time-trial bike hangs on the wall, the kit waits in the wardrobe, and both come out when it's time to suffer.</p>
-    <p>The opposite of my day job: no shortcuts, no abstractions, nobody to delegate to.</p>
+    <h2>Sport</h2>
+    <p class="lead">Run, bike, swim.</p>
+    <p>Mountain or sea, alone or in a group. Always, everywhere.</p>
     <ul class="tags"><li>swim</li><li>bike</li><li>run</li></ul>
+  </section>
+
+  <section data-id="robot" hidden>
+    <p class="k">~/sapoconcho</p>
+    <h2>Sapoconcho</h2>
+    <p class="lead">The little robot roaming the floor is a Sapoconcho, a project I collaborated on at Bricolabs.</p>
+    <p>An open-source educational robot to introduce kids to robotics and programming.</p>
+    <p class="links"><a href="https://sapoconcho.bricolabs.cc/">sapoconcho.bricolabs.cc</a></p>
   </section>
 
   <nav><button class="prev">← prev</button><button class="next">next →</button></nav>
