@@ -793,7 +793,7 @@ export function buildScene() {
     });
     // accessory section: divider + shelves on the right of the hanging rail
     const az = wz + 0.283, aw = 0.37, ax = fx - 0.2;
-    sport.rbox(T(wx, wh / 2, wz + 0.09), wd - 0.03, wh - 0.1, 0.016, COL.white, 0.004);
+    sport.rbox(T(wx, (0.39 + wh - 0.024) / 2, wz + 0.09), wd - 0.03, wh - 0.024 - 0.39, 0.016, COL.white, 0.004);
     for (const y of [0.78, 1.18, 1.58]) sport.rbox(T(wx, y, az), wd - 0.03, 0.02, aw, COL.white, 0.005);
     const dome = (base, r, hg, col, n = 24, layers = 9) => {
       for (let i = 0; i < layers; i++) {
